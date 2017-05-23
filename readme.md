@@ -3,6 +3,7 @@
 ### 简介
 
 * 校历生成工具，根据提供的学期开始日期以及周数和事件，生成校历json数据，可作为校园开放平台接口供第三方服务调用。
+* 同时实现了一个标准化日历的API server可以供提供订阅服务。
 
 ### 使用方法
 
@@ -11,6 +12,11 @@
         `python main.py input.json`
     * 基于模块导入使用：
         `from HIT_school_calender.main import CalenderApp`
+* API Server基于webpy实现。
+    * 基于命令行部署：
+        `python CalenderAPIServer.py 8000`
+    * 基于nginx + uwsgi部署：
+        pass
 
 ### 参数
 
@@ -84,6 +90,10 @@
     app = CalenderApp(first_day, week_num, events, beauty)
     result = app.gen_json()
     ```
+* API Server访问
+    * 基于标准get请求，提供8位开始及结束日期
+    * http://server/?start=20170225&end=20170228
+
 
 ### 返回结果
 
@@ -142,6 +152,47 @@
             * date: 日期，格式"yyyy-mm-dd"
             * weekday: 星期几，用1-7表示周一到周日
             * events: 本日事件，字符串，无则为null，注意：此处为unicode编码，直接使用文本编辑器打开显示为编码，浏览器或程序读入后正常显示中文。
+
+* API Server返回结果同为json格式，示例如下：
+
+```json
+{
+    "errcode": 0,
+    "errmsg": "ok",
+    "events": [
+        {
+            "eventid": 364761512,
+            "end": "2017-02-27 00:00",
+            "description": "\u672c\u79d1\u751f\u548c\u7814\u7a76\u751f\u8001\u751f\u5230\u6821\u6ce8\u518c",
+            "title": "\u672c\u79d1\u751f\u548c\u7814\u7a76\u751f\u8001\u751f\u5230\u6821\u6ce8\u518c",
+            "url": "",
+            "start": "2017-02-26 00:00",
+            "address": ""
+        },
+        {
+            "eventid": 364761509,
+            "end": "2017-02-26 00:00",
+            "description": "\u672c\u79d1\u751f\u548c\u7814\u7a76\u751f\u8001\u751f\u5230\u6821\u6ce8\u518c",
+            "title": "\u672c\u79d1\u751f\u548c\u7814\u7a76\u751f\u8001\u751f\u5230\u6821\u6ce8\u518c",
+            "url": "",
+            "start": "2017-02-25 00:00",
+            "address": ""
+        }
+    ]
+}
+```
+
+* 字段说明
+    * errcode: 返回码
+    * errmsg: 对返回码的本文描述
+    * events: 日程事件数组
+    * eventid: 事件id
+    * title: 事件标题
+    * description: 事件描述
+    * start: 开始时间
+    * end: 结束时间
+    * address: 事件地址
+    * url: 详情页面
 
 ### 联系作者
 
